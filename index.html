@@ -1,0 +1,639 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Cloudly - Revolutionize Your Cloud Infrastructure</title>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Alpine.js -->
+    <script
+      defer
+      src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"
+    ></script>
+
+    <!-- GSAP -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+
+    <!-- AOS Animation Library -->
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet" />
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+
+    <!-- Font Awesome -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+
+    <!-- Google Fonts -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="style.css" />
+
+    <style>
+      .gradient-bg {
+        background: linear-gradient(
+          135deg,
+          #667eea 0%,
+          #764ba2 50%,
+          #f093fb 100%
+        );
+      }
+      .glass-effect {
+        background: rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+      }
+      .floating {
+        animation: floating 3s ease-in-out infinite;
+      }
+      @keyframes floating {
+        0%,
+        100% {
+          transform: translateY(0px);
+        }
+        50% {
+          transform: translateY(-20px);
+        }
+      }
+      .pulse-glow {
+        animation: pulse-glow 2s ease-in-out infinite alternate;
+      }
+      @keyframes pulse-glow {
+        from {
+          box-shadow: 0 0 20px rgba(102, 126, 234, 0.5);
+        }
+        to {
+          box-shadow: 0 0 40px rgba(102, 126, 234, 0.8);
+        }
+      }
+      .gradient-text {
+        background: linear-gradient(135deg, #667eea, #764ba2, #f093fb);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+      }
+      .particle {
+        position: absolute;
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 50%;
+        pointer-events: none;
+      }
+    </style>
+  </head>
+  <body
+    class="bg-gray-900 text-white overflow-x-hidden"
+    x-data="{ 
+    mobileMenuOpen: false,
+    currentPlan: 'pro',
+    particles: []
+}"
+    x-init="
+    AOS.init({
+        duration: 1000,
+        once: true,
+        offset: 100
+    });
+    
+    for(let i = 0; i < 50; i++) {
+        particles.push({
+            x: Math.random() * window.innerWidth,
+            y: Math.random() * window.innerHeight,
+            size: Math.random() * 3 + 1,
+            speed: Math.random() * 2 + 0.5
+        });
+    }
+    
+    gsap.registerPlugin(ScrollTrigger);
+    
+    gsap.from('.hero-title', {
+        duration: 1.5,
+        y: 100,
+        opacity: 0,
+        ease: 'power4.out'
+    });
+    
+    gsap.from('.hero-tagline', {
+        duration: 1.5,
+        y: 50,
+        opacity: 0,
+        delay: 0.3,
+        ease: 'power4.out'
+    });
+    
+    gsap.from('.cta-button', {
+        duration: 1,
+        scale: 0,
+        opacity: 0,
+        delay: 0.6,
+        ease: 'back.out(1.7)'
+    });
+    
+    gsap.to('.floating', {
+        y: -20,
+        duration: 2,
+        ease: 'power2.inOut',
+        yoyo: true,
+        repeat: -1
+    });
+    
+    gsap.utils.toArray('.feature-card').forEach((card, i) => {
+        gsap.from(card, {
+            scrollTrigger: {
+                trigger: card,
+                start: 'top 80%',
+                end: 'bottom 20%',
+                toggleActions: 'play none none reverse'
+            },
+            y: 100,
+            opacity: 0,
+            duration: 0.8,
+            delay: i * 0.2
+        });
+    });
+    
+    gsap.from('.pricing-card', {
+        scrollTrigger: {
+            trigger: '.pricing',
+            start: 'top 70%'
+        },
+        y: 100,
+        opacity: 0,
+        duration: 1,
+        stagger: 0.3
+    });
+"
+  >
+    <!-- Floating Particles -->
+    <div class="fixed inset-0 pointer-events-none z-0">
+      <template x-for="(particle, index) in particles" :key="index">
+        <div
+          class="particle"
+          :style="`left: ${particle.x}px; top: ${particle.y}px; width: ${particle.size}px; height: ${particle.size}px;`"
+          x-data="{ 
+                     x: particle.x, 
+                     y: particle.y,
+                     speed: particle.speed 
+                 }"
+          x-init="
+                     setInterval(() => {
+                         y -= speed;
+                         if(y < -10) y = window.innerHeight + 10;
+                         $el.style.transform = `translate(${x}px, ${y}px)`;
+                     }, 50);
+                 "
+        ></div>
+      </template>
+    </div>
+
+    <!-- Navigation -->
+    <nav
+      class="fixed top-0 w-full z-50 nav-glass"
+      x-data="{ scrolled: false }"
+      x-init="window.addEventListener('scroll', () => scrolled = window.scrollY > 50)"
+      :class="{ 'scrolled': scrolled }"
+    >
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex justify-between items-center py-4">
+          <div class="flex items-center">
+            <div class="text-2xl font-bold gradient-text">Cloudly</div>
+          </div>
+
+          <!-- Desktop Menu -->
+          <div class="hidden md:flex items-center space-x-8">
+            <a href="#features" class="hover:text-blue-400 transition-colors"
+              >Features</a
+            >
+            <a href="#pricing" class="hover:text-blue-400 transition-colors"
+              >Pricing</a
+            >
+            <a href="#contact" class="hover:text-blue-400 transition-colors"
+              >Contact</a
+            >
+            <button class="btn-primary">Get Started</button>
+          </div>
+
+          <!-- Mobile menu button -->
+          <div class="md:hidden">
+            <button
+              @click="mobileMenuOpen = !mobileMenuOpen"
+              class="text-white"
+            >
+              <i class="fas fa-bars text-xl"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Mobile Menu -->
+      <div x-show="mobileMenuOpen" x-transition class="md:hidden glass-effect">
+        <div class="px-2 pt-2 pb-3 space-y-1">
+          <a href="#features" class="block px-3 py-2 hover:text-blue-400"
+            >Features</a
+          >
+          <a href="#pricing" class="block px-3 py-2 hover:text-blue-400"
+            >Pricing</a
+          >
+          <a href="#contact" class="block px-3 py-2 hover:text-blue-400"
+            >Contact</a
+          >
+          <button class="w-full mt-4 btn-primary">Get Started</button>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section
+      class="relative min-h-screen flex items-center justify-center gradient-bg overflow-hidden"
+    >
+      <div class="absolute inset-0 bg-black opacity-20"></div>
+
+      <!-- Animated Background Elements -->
+      <div
+        class="absolute top-20 left-20 w-32 h-32 bg-blue-500 rounded-full mix-blend-multiply filter blur-xl opacity-70 floating"
+      ></div>
+      <div
+        class="absolute top-40 right-20 w-24 h-24 bg-purple-500 rounded-full mix-blend-multiply filter blur-xl opacity-70 floating"
+        style="animation-delay: 1s"
+      ></div>
+      <div
+        class="absolute bottom-20 left-1/3 w-20 h-20 bg-pink-500 rounded-full mix-blend-multiply filter blur-xl opacity-70 floating"
+        style="animation-delay: 2s"
+      ></div>
+
+      <div class="relative z-10 text-center max-w-4xl mx-auto px-4">
+        <h1
+          class="hero-title text-6xl md:text-8xl font-black mb-8 leading-tight"
+        >
+          <span class="gradient-text">Cloudly</span>
+        </h1>
+        <p
+          class="hero-tagline text-xl md:text-2xl mb-12 opacity-90 leading-relaxed"
+        >
+          Revolutionize your cloud infrastructure with AI-powered automation.
+          <span class="font-semibold">No DevOps required.</span>
+        </p>
+        <div
+          class="flex flex-col sm:flex-row gap-4 justify-center items-center"
+        >
+          <button class="cta-button btn-primary pulse-glow">
+            <i class="fas fa-rocket mr-2"></i>
+            Launch Your Infrastructure
+          </button>
+          <button class="btn-secondary">
+            <i class="fas fa-play mr-2"></i>
+            Watch Demo
+          </button>
+        </div>
+
+        <!-- Stats -->
+        <div
+          class="mt-16 grid grid-cols-1 md:grid-cols-3 gap-8"
+          data-aos="fade-up"
+          data-aos-delay="800"
+        >
+          <div class="text-center">
+            <div class="text-3xl font-bold text-blue-300">10,000+</div>
+            <div class="text-sm opacity-75">Infrastructures Deployed</div>
+          </div>
+          <div class="text-center">
+            <div class="text-3xl font-bold text-purple-300">99.9%</div>
+            <div class="text-sm opacity-75">Uptime Guarantee</div>
+          </div>
+          <div class="text-center">
+            <div class="text-3xl font-bold text-pink-300">5min</div>
+            <div class="text-sm opacity-75">Average Setup Time</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Scroll Indicator -->
+      <div
+        class="absolute bottom-8 left-1/2 transform -translate-x-1/2 animate-bounce"
+      >
+        <i class="fas fa-chevron-down text-2xl opacity-50"></i>
+      </div>
+    </section>
+
+    <!-- Features Section -->
+    <section id="features" class="py-20 bg-gray-900">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-16" data-aos="fade-up">
+          <h2 class="text-4xl md:text-5xl font-bold mb-6 gradient-text">
+            Powerful Features
+          </h2>
+          <p class="text-xl text-gray-400 max-w-3xl mx-auto">
+            Everything you need to build, deploy, and scale your cloud
+            infrastructure with confidence.
+          </p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <!-- Feature 1 -->
+          <div
+            class="feature-card bg-gray-800 rounded-2xl p-8 hover:bg-gray-700 transition-all duration-300 transform hover:-translate-y-2"
+            data-aos="fade-up"
+            data-aos-delay="100"
+          >
+            <div
+              class="w-16 h-16 bg-gradient-to-r from-blue-500 to-purple-600 rounded-2xl flex items-center justify-center mb-6"
+            >
+              <i class="fas fa-magic text-2xl"></i>
+            </div>
+            <h3 class="text-2xl font-bold mb-4">No-Code Infrastructure</h3>
+            <p class="text-gray-400 leading-relaxed">
+              Build complex cloud architectures using our intuitive
+              drag-and-drop interface. No coding knowledge required.
+            </p>
+            <div class="mt-6 flex items-center text-blue-400">
+              <span class="text-sm font-semibold">Learn More</span>
+              <i class="fas fa-arrow-right ml-2"></i>
+            </div>
+          </div>
+
+          <!-- Feature 2 -->
+          <div
+            class="feature-card bg-gray-800 rounded-2xl p-8 hover:bg-gray-700 transition-all duration-300 transform hover:-translate-y-2"
+            data-aos="fade-up"
+            data-aos-delay="200"
+          >
+            <div
+              class="w-16 h-16 bg-gradient-to-r from-green-500 to-blue-600 rounded-2xl flex items-center justify-center mb-6"
+            >
+              <i class="fas fa-cloud text-2xl"></i>
+            </div>
+            <h3 class="text-2xl font-bold mb-4">Multi-Cloud Support</h3>
+            <p class="text-gray-400 leading-relaxed">
+              Deploy across AWS, Azure, and Google Cloud simultaneously.
+              Maintain complete control and flexibility.
+            </p>
+            <div class="mt-6 flex items-center text-green-400">
+              <span class="text-sm font-semibold">Explore Clouds</span>
+              <i class="fas fa-arrow-right ml-2"></i>
+            </div>
+          </div>
+
+          <!-- Feature 3 -->
+          <div
+            class="feature-card bg-gray-800 rounded-2xl p-8 hover:bg-gray-700 transition-all duration-300 transform hover:-translate-y-2"
+            data-aos="fade-up"
+            data-aos-delay="300"
+          >
+            <div
+              class="w-16 h-16 bg-gradient-to-r from-purple-500 to-pink-600 rounded-2xl flex items-center justify-center mb-6"
+            >
+              <i class="fas fa-cubes text-2xl"></i>
+            </div>
+            <h3 class="text-2xl font-bold mb-4">Prebuilt Templates</h3>
+            <p class="text-gray-400 leading-relaxed">
+              Choose from hundreds of production-ready templates. From simple
+              web apps to complex microservices.
+            </p>
+            <div class="mt-6 flex items-center text-purple-400">
+              <span class="text-sm font-semibold">Browse Templates</span>
+              <i class="fas fa-arrow-right ml-2"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Interactive Demo Section -->
+    <section class="py-20 bg-gray-800">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+          <div data-aos="fade-right">
+            <h2 class="text-4xl md:text-5xl font-bold mb-6 gradient-text">
+              See Cloudly in Action
+            </h2>
+            <p class="text-xl text-gray-400 mb-8">
+              Watch how easy it is to deploy a full-stack application in under 5
+              minutes.
+            </p>
+            <div class="space-y-4">
+              <div class="flex items-center">
+                <div
+                  class="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center mr-4"
+                >
+                  <i class="fas fa-check text-sm"></i>
+                </div>
+                <span>Drag & drop components</span>
+              </div>
+              <div class="flex items-center">
+                <div
+                  class="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center mr-4"
+                >
+                  <i class="fas fa-check text-sm"></i>
+                </div>
+                <span>Automatic scaling configuration</span>
+              </div>
+              <div class="flex items-center">
+                <div
+                  class="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center mr-4"
+                >
+                  <i class="fas fa-check text-sm"></i>
+                </div>
+                <span>One-click deployment</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="relative" data-aos="fade-left">
+            <div class="bg-gray-900 rounded-2xl p-6 shadow-2xl">
+              <div class="flex items-center mb-4">
+                <div class="flex space-x-2">
+                  <div class="w-3 h-3 bg-red-500 rounded-full"></div>
+                  <div class="w-3 h-3 bg-yellow-500 rounded-full"></div>
+                  <div class="w-3 h-3 bg-green-500 rounded-full"></div>
+                </div>
+                <div class="ml-4 text-sm text-gray-400">cloudly-demo.cloud</div>
+              </div>
+              <div class="bg-gray-800 rounded-lg p-4 font-mono text-sm">
+                <div class="text-green-400">$</div>
+                <div class="text-blue-400">Deploying infrastructure...</div>
+                <div class="text-yellow-400">✓</div>
+                <div class="text-green-400">✓</div>
+                <div class="text-green-400">✓</div>
+                <div class="text-white">🚀 Deployment complete!</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Pricing Section -->
+    <section id="pricing" class="py-20 bg-gray-900">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-16" data-aos="fade-up">
+          <h2 class="text-4xl md:text-5xl font-bold mb-6 gradient-text">
+            Choose Your Plan
+          </h2>
+          <p class="text-xl text-gray-400">
+            Start free and scale as you grow. No hidden fees, no surprises.
+          </p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+          <!-- Starter Plan -->
+          <div
+            class="rounded-2xl p-8 bg-gray-800 text-center shadow-lg hover:bg-gray-700 transition-all duration-300"
+            data-aos="fade-up"
+            data-aos-delay="100"
+          >
+            <h3 class="text-2xl font-bold mb-4">Starter</h3>
+            <div class="text-4xl font-bold mb-2">Free</div>
+            <div class="text-gray-400 mb-8">Forever</div>
+            <ul class="space-y-4 mb-8 text-left">
+              <li class="flex items-center">
+                <i class="fas fa-check text-green-400 mr-3"></i>Up to 3 projects
+              </li>
+              <li class="flex items-center">
+                <i class="fas fa-check text-green-400 mr-3"></i>Basic templates
+              </li>
+              <li class="flex items-center">
+                <i class="fas fa-check text-green-400 mr-3"></i>Community
+                support
+              </li>
+              <li class="flex items-center">
+                <i class="fas fa-check text-green-400 mr-3"></i>Standard
+                deployment
+              </li>
+            </ul>
+            <button
+              class="w-full bg-gray-700 hover:bg-gray-600 text-white py-3 rounded-full font-semibold transition-all duration-300"
+            >
+              Start Free
+            </button>
+          </div>
+
+          <!-- Pro Plan -->
+          <div
+            class="relative rounded-2xl p-8 bg-gradient-to-br from-blue-600 to-purple-600 text-center shadow-2xl transform scale-105 border-4 border-yellow-400"
+            data-aos="fade-up"
+            data-aos-delay="200"
+          >
+            <div class="absolute -top-4 left-1/2 transform -translate-x-1/2">
+              <span
+                class="bg-yellow-400 text-black px-4 py-1 rounded-full text-sm font-bold shadow"
+                >Most Popular</span
+              >
+            </div>
+            <h3 class="text-2xl font-bold mb-4">Pro</h3>
+            <div class="text-4xl font-bold mb-2">$19</div>
+            <div class="text-blue-100 mb-8">per month</div>
+            <ul class="space-y-4 mb-8 text-left">
+              <li class="flex items-center">
+                <i class="fas fa-check text-white mr-3"></i>Unlimited projects
+              </li>
+              <li class="flex items-center">
+                <i class="fas fa-check text-white mr-3"></i>All templates
+              </li>
+              <li class="flex items-center">
+                <i class="fas fa-check text-white mr-3"></i>Priority support
+              </li>
+              <li class="flex items-center">
+                <i class="fas fa-check text-white mr-3"></i>Advanced automation
+              </li>
+              <li class="flex items-center">
+                <i class="fas fa-check text-white mr-3"></i>Team collaboration
+              </li>
+            </ul>
+            <button
+              class="w-full bg-white text-blue-600 py-3 rounded-full font-semibold hover:bg-gray-100 transition-all duration-300 transform hover:scale-105"
+            >
+              Get Pro
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="py-20 gradient-bg">
+      <div class="max-w-4xl mx-auto text-center px-4" data-aos="zoom-in">
+        <h2 class="text-4xl md:text-5xl font-bold mb-6">
+          Ready to Transform Your Infrastructure?
+        </h2>
+        <p class="text-xl mb-8 opacity-90">
+          Join thousands of developers who've already simplified their cloud
+          deployments.
+        </p>
+        <div class="flex flex-col sm:flex-row gap-4 justify-center">
+          <button class="btn-primary">
+            <i class="fas fa-rocket mr-2"></i>
+            Start Building Now
+          </button>
+          <button class="btn-secondary">
+            <i class="fas fa-comments mr-2"></i>
+            Talk to Sales
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 py-12">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center">
+          <div class="text-2xl font-bold gradient-text mb-4">Cloudly</div>
+          <p class="text-gray-400 mb-8">© 2025 Cloudly. All rights reserved.</p>
+          <div class="flex justify-center space-x-6">
+            <a
+              href="#"
+              class="text-gray-400 hover:text-white transition-colors"
+            >
+              <i class="fab fa-twitter text-xl"></i>
+            </a>
+            <a
+              href="#"
+              class="text-gray-400 hover:text-white transition-colors"
+            >
+              <i class="fab fa-github text-xl"></i>
+            </a>
+            <a
+              href="#"
+              class="text-gray-400 hover:text-white transition-colors"
+            >
+              <i class="fab fa-linkedin text-xl"></i>
+            </a>
+            <a
+              href="#"
+              class="text-gray-400 hover:text-white transition-colors"
+            >
+              <i class="fab fa-discord text-xl"></i>
+            </a>
+          </div>
+        </div>
+      </div>
+    </footer>
+
+    <script>
+      // Additional GSAP animations
+      gsap.to(".gradient-text", {
+        backgroundPosition: "200% center",
+        duration: 3,
+        ease: "power2.inOut",
+        repeat: -1,
+        yoyo: true,
+      });
+
+      // Parallax effect for floating elements
+      window.addEventListener("scroll", () => {
+        const scrolled = window.pageYOffset;
+        const parallax = document.querySelectorAll(".floating");
+        parallax.forEach((element) => {
+          const speed = 0.5;
+          element.style.transform = `translateY(${scrolled * speed}px)`;
+        });
+      });
+    </script>
+  </body>
+</html>
